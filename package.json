@@ -42,9 +42,9 @@
     "test": "pnpm build && node --test test/*.test.js",
     "test:coverage": "pnpm build && c8 --check-coverage --lines 95 --branches 90 --functions 100 --statements 95 node --test test/*.test.js",
     "package:check": "pnpm build && publint && npm_config_cache=.cache/npm attw --pack --profile esm-only .",
-    "package:smoke": "node scripts/package-smoke.mjs",
+    "package:smoke": "pnpm build && node scripts/package-smoke.mjs",
     "pack:check": "pnpm build && npm_config_cache=.cache/npm npm pack --dry-run --json",
-    "check": "pnpm format:check && pnpm lint && pnpm build && pnpm typecheck && pnpm test:coverage && pnpm package:check && pnpm package:smoke",
+    "check": "pnpm format:check && pnpm build && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm package:check && pnpm package:smoke",
     "prepack": "pnpm build"
   },
   "keywords": [
@@ -70,7 +70,7 @@
     "access": "public",
     "provenance": true
   },
-  "packageManager": "pnpm@11.21.0",
+  "packageManager": "pnpm@10.28.2",
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

@@ -2,7 +2,7 @@
 
 ## Development setup
 
-Requirements: Node.js 20 or newer and pnpm 11.21.0.
+Requirements: Node.js 20 or newer and pnpm 10.28.2.
 
 ```bash
 corepack enable

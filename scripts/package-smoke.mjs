@@ -13,7 +13,7 @@ const npmCache = join(root, ".cache", "npm");
 const environment = { ...process.env, npm_config_cache: npmCache };
 
 try {
-  const packed = await exec("npm", ["pack", "--json", "--pack-destination", temporary], {
+  const packed = await exec("npm", ["pack", "--ignore-scripts", "--json", "--pack-destination", temporary], {
     cwd: root,
     env: environment
   });
