@@ -1,7 +1,7 @@
 {
   "name": "dsh-gpt-compat",
   "description": "Fail-closed DSH compatibility guard for redundant GPT/Codex sandbox escalation arguments",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

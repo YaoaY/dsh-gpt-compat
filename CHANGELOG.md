@@ -2,6 +2,12 @@
 
 This project follows Semantic Versioning.
 
+## 0.2.3 - 2026-08-21
+
+### Fixed
+
+- Use npm 11 in the GitHub Actions publish job so npm Trusted Publishing can authenticate with GitHub OIDC.
+
 ## 0.2.2 - 2026-08-21
 
 ### Fixed
