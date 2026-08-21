@@ -16,8 +16,8 @@ function hasValue(args: Record<string, unknown>, key: EscalationKey): boolean {
 }
 
 /**
- * Classify one model-supplied escalation pair without mutating the arguments.
- * Unknown or malformed security-sensitive input is preserved for DSH core validation.
+ * Unknown contracts and malformed widening requests are preserved for DSH core validation;
+ * redundant non-widening targets are safe to remove even when their reason is malformed.
  */
 export function classifyEscalation(
   args: Record<string, unknown> | undefined,
@@ -29,21 +29,24 @@ export function classifyEscalation(
   const hasJustification = hasValue(args, "justification");
   if (!hasRequested && !hasJustification) return { kind: "none" };
   if (!isSandboxMode(currentMode)) return { kind: "preserve", reason: "unknown-contract" };
-  if (!hasRequested || !hasJustification) return { kind: "preserve", reason: "invalid-request" };
+  if (!hasRequested) return { kind: "preserve", reason: "invalid-request" };
 
   const requested = args.sandbox_permissions;
-  const justification = args.justification;
   if (!isEscalationTarget(requested)) return { kind: "preserve", reason: "invalid-request" };
-  if (typeof justification !== "string" || justification.trim().length === 0) {
+  if (!isStrictlyWider(requested, currentMode)) {
+    return { kind: "strip", keys: ESCALATION_KEYS, reason: "redundant" };
+  }
+
+  const justification = args.justification;
+  if (!hasJustification || typeof justification !== "string" || justification.trim().length === 0) {
     return { kind: "preserve", reason: "invalid-request" };
   }
-  if (isStrictlyWider(requested, currentMode)) return { kind: "preserve", reason: "valid-escalation" };
-  return { kind: "strip", keys: ESCALATION_KEYS, reason: "redundant" };
+  return { kind: "preserve", reason: "valid-escalation" };
 }
 
 /**
- * Return the two keys to remove only when the request is a known redundant escalation.
- * This compatibility helper is intentionally fail-closed for malformed input.
+ * Return the two keys to remove when the requested target is a known mode that
+ * cannot widen the current policy. Widening requests remain fail-closed.
  */
 export function planEscalationStripping(
   args: Record<string, unknown> | undefined,

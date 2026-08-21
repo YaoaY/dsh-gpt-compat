@@ -71,7 +71,7 @@ test("real ToolRuntime dispatches redundant escalation under the standing policy
   });
 });
 
-test("real ToolRuntime preserves malformed escalation for tool validation", async () => {
+test("real ToolRuntime strips an incomplete redundant escalation", async () => {
   const ctx = await installRuntime("workspace-write");
   ctx.tools.register(editTool);
 
@@ -80,7 +80,8 @@ test("real ToolRuntime preserves malformed escalation for tool validation", asyn
     name: "edit",
     arguments: {
       content: "updated",
-      sandbox_permissions: "workspace-write"
+      sandbox_permissions: "workspace-write",
+      justification: ""
     },
     signal: new AbortController().signal
   });
@@ -88,7 +89,7 @@ test("real ToolRuntime preserves malformed escalation for tool validation", asyn
   assert.equal(result.isError, false);
   assert.deepEqual(result.value, {
     content: "updated",
-    hasPermissions: true,
+    hasPermissions: false,
     frozen: true
   });
 });

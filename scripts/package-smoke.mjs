@@ -8,6 +8,7 @@ import { execFile } from "node:child_process";
 
 const exec = promisify(execFile);
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const packageManifest = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
 const temporary = await mkdtemp(join(tmpdir(), "dsh-gpt-compat-consumer-"));
 const npmCache = join(root, ".cache", "npm");
 const environment = { ...process.env, npm_config_cache: npmCache };
@@ -49,7 +50,7 @@ try {
   const manifest = JSON.parse(
     await readFile(join(temporary, "node_modules", "dsh-gpt-compat", "package.json"))
   );
-  assert.equal(manifest.version, "0.2.0");
+  assert.equal(manifest.version, packageManifest.version);
   process.stdout.write("Tarball consumer smoke test passed.\n");
 } finally {
   await rm(temporary, { recursive: true, force: true });

@@ -2,6 +2,12 @@
 
 This project follows Semantic Versioning.
 
+## 0.2.1 - 2026-08-21
+
+### Fixed
+
+- Redundant requests for a known non-widening sandbox mode are now stripped even when GPT supplies an empty, missing, or malformed `justification`; malformed widening requests remain fail-closed.
+
 ## 0.2.0 - 2026-08-18
 
 ### Changed

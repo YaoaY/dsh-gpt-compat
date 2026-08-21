@@ -24,10 +24,22 @@ test("does nothing when no escalation fields are present", () => {
   assert.deepEqual(planEscalationStripping(undefined, "danger-full-access"), []);
 });
 
-test("strips only known redundant requests", () => {
+test("strips known redundant requests even when their justification is malformed", () => {
   assert.deepEqual(planEscalationStripping(valid("workspace-write"), "workspace-write"), BOTH);
   assert.deepEqual(planEscalationStripping(valid("danger-full-access"), "danger-full-access"), BOTH);
   assert.deepEqual(planEscalationStripping(valid("workspace-write"), "danger-full-access"), BOTH);
+  assert.deepEqual(planEscalationStripping(valid("workspace-write", ""), "workspace-write"), BOTH);
+  assert.deepEqual(
+    planEscalationStripping({ sandbox_permissions: "workspace-write" }, "workspace-write"),
+    BOTH
+  );
+  assert.deepEqual(
+    planEscalationStripping(
+      { sandbox_permissions: "workspace-write", justification: 7 },
+      "danger-full-access"
+    ),
+    BOTH
+  );
 });
 
 test("preserves genuine widening requests", () => {
@@ -41,8 +53,8 @@ test("preserves genuine widening requests", () => {
   });
 });
 
-test("preserves malformed requests for DSH core validation", () => {
-  assert.deepEqual(classifyEscalation({ sandbox_permissions: "workspace-write" }, "danger-full-access"), {
+test("preserves malformed widening requests for DSH core validation", () => {
+  assert.deepEqual(classifyEscalation({ sandbox_permissions: "workspace-write" }, "read-only"), {
     kind: "preserve",
     reason: "invalid-request"
   });

@@ -42,9 +42,9 @@ The plugin follows fail-closed rules:
 
 - A call must match both the configured `providers` and `tools` lists.
 - The registered tool schema must declare both the DSH `sandbox_permissions` enum and the `justification` field.
-- Only complete, non-empty requests using known modes and asking for no additional privilege are removed.
-- Genuine escalation requests remain unchanged and continue through the native DSH approval flow.
-- Unpaired fields, empty reasons, unknown modes, and policy resolution failures remain unchanged for DSH core to validate or reject.
+- Only complete or provably redundant requests are removed: when the target mode is known and does not widen the current policy, both escalation fields are removed even if the reason is empty, missing, or malformed.
+- Genuine widening requests require a non-empty reason and remain unchanged, continuing through native DSH approval.
+- Unpaired fields, empty reasons on widening requests, unknown modes, and policy resolution failures remain unchanged for DSH core to validate or reject.
 - The current provider is read from the session request header, with the agent's initial provider used only as a fallback.
 
 These checks prevent the plugin from modifying MCP or third-party tools based on argument names alone. Only tools that implement the native DSH escalation contract should be added to `tools`.
@@ -118,7 +118,7 @@ pnpm pack:check
 
 - The log reports `inactive`: either `providers` or `tools` is empty.
 - Arguments are not removed: check the current session provider route, the tool name, and whether the registered schema declares the complete escalation field pair.
-- A malformed request still fails: this is expected; the plugin does not downgrade invalid security requests into ordinary calls.
-- An escalation still prompts for approval: the requested mode is strictly wider than the current mode, so the plugin preserves the request for native DSH approval.
+- A malformed widening request still fails: this is expected; the plugin does not downgrade a widening request without a non-empty reason into an ordinary call.
+- An ordinary call still fails: check whether `sandbox_permissions` is a known mode that is not strictly wider than the current session policy; redundant fields are removed in that case.
 
 Report security issues privately as described in [SECURITY.md](SECURITY.md). See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution process and [CHANGELOG.md](CHANGELOG.md) for release changes.

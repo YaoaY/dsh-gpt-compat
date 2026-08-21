@@ -12,7 +12,8 @@ pnpm run check
 
 ## Change requirements
 
-- Preserve fail-closed behavior for unknown or malformed escalation requests.
+- Preserve fail-closed behavior for unknown contracts and malformed widening requests.
+- Strip malformed escalation fields only when the target mode is known and cannot widen the standing policy.
 - Never select tools solely because their arguments contain matching field names.
 - Add pure decision tests and ToolRuntime/Cordis integration coverage for behavioral changes.
 - Keep public types generated from TypeScript source; do not hand-edit `dist`.

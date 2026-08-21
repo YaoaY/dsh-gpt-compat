@@ -92,7 +92,44 @@ test("strips a redundant request only from an opted-in DSH escalation tool", asy
   assert.equal(Object.isFrozen(exec.arguments), true);
 });
 
-test("preserves genuine widening and malformed requests for core validation", async () => {
+test("strips a redundant request even when GPT supplies an empty justification", async () => {
+  const { ctx } = await createContext({ mode: "workspace-write" });
+  const exec = execution({ arguments: { justification: "" } });
+
+  await fire(ctx, exec);
+
+  assert.equal("sandbox_permissions" in exec.arguments, false);
+  assert.equal("justification" in exec.arguments, false);
+});
+
+test("strips the first bash call's empty justification under workspace-write", async () => {
+  const { ctx } = await createContext(
+    {
+      mode: "workspace-write",
+      definitions: { bash: { ...escalationDefinition, name: "bash" } }
+    },
+    { providers: ["gpt-provider"], tools: ["bash"] }
+  );
+  const exec = execution({
+    name: "bash",
+    arguments: {
+      command: "pwd",
+      description: "Confirm current working directory",
+      justification: "",
+      run_in_background: false,
+      sandbox_permissions: "workspace-write",
+      timeoutMs: 10000,
+      workdir: "/home/dianxian/workspace/projects/dianx-safety"
+    }
+  });
+
+  await fire(ctx, exec);
+
+  assert.equal("sandbox_permissions" in exec.arguments, false);
+  assert.equal("justification" in exec.arguments, false);
+});
+
+test("preserves genuine widening and malformed widening requests for core validation", async () => {
   const { ctx } = await createContext({ mode: "read-only" });
   const widening = execution({
     arguments: {

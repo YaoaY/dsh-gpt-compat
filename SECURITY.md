@@ -18,4 +18,4 @@ Maintainers should acknowledge a report within seven days and provide an initial
 
 ## Scope
 
-Security-sensitive behavior includes tool selection, provider routing, sandbox-mode classification, argument preservation or removal, and interactions with the native DSH approval flow. Unknown or malformed escalation requests must remain fail-closed.
+Security-sensitive behavior includes tool selection, provider routing, sandbox-mode classification, argument preservation or removal, and interactions with the native DSH approval flow. Unknown contracts and malformed widening requests must remain fail-closed. A request for a known target that cannot widen the current policy may have both escalation fields removed even when its justification is missing or malformed, because the call continues only under the already-authorized standing policy.
